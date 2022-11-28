@@ -58,15 +58,59 @@ $("#deliveryBoard tr").click(function(){
     }
 });
 
-// $.ajax({
-//     url: 'https://randomuser.me/api/',
-//     dataType: 'json',
-//     success: function(data) {
-//       console.log(data);
-//     }
-//   });
 
 class Employee{
-    constructor()
+    constructor(
+        data
+){
+    this.name = data.name.first;
+    this.surname = data.name.last;
+ }
+}
+
+class StaffMember extends Employee{
+    constructor(data){
+    super(data);
+    this.picture = data.picture.thumbnail;
+    this.email = data.email
+    this.status = "In";
+    this.outTime = "";
+    this.duration = "";
+    this.expectedReturn = "";
+}staffMemberIsLate(){
+    return `${this.name} is late! They left at ${this.outTime}`;
+}
 
 }
+class DeliveryDriver extends Employee{
+    constructor(data){
+    super(data);
+    this.vehicle = data.vehicle
+    this.telephone = data.telephone
+    this.address = data.address
+    this.returnTime = data.returnTime
+}deliveryDriverIsLate(){
+    return `${this.name} is late! They were supposed to return  at ${this.returnTime}`;
+}
+}
+
+function employeeFactory(type,options) {
+    switch(type){
+        case 'Staff':
+        $.ajax({
+            url:'https://randomuser.me/api/',
+            async: false,  
+            success:function(data) {
+               result = data.results[0]; 
+            }
+            });
+            return new StaffMember(result);
+        case 'Delivery':
+            return new DeliveryDriver(options);
+    }
+   
+}
+
+
+
+
