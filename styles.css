@@ -1,0 +1,82 @@
+thead{
+    background-color:  #0E8EA8;
+    color: white;
+    font-family: Consolas;
+    text-align: center;
+}
+
+
+table.table-bordered{
+    border-width: thin;
+    border: 2px solid #212529;
+    border-radius: 15px;
+ 
+  }
+
+tbody{
+    font-family: Calibri;
+    color: #212529;
+    background-color: #83D1E1;
+    text-align: center;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+h1,p{
+    font-family: Calibri;
+    color: #212529;
+}
+.btn.positive{
+    font-family: Consolas;
+    background-color: #dc3545;
+    color: #fff;
+}
+.btn.negative{
+    font-family: Consolas;
+    background-color: #198754;
+    color: #fff;
+}
+
+
+.btn:hover{
+    font-size: large;
+ }
+.container{
+    margin-top: 10px;
+}
+
+nav{
+    font-family: Consolas;
+}
+.nav-item, .nav-link{
+    background-color: #0E8EA8;
+    color: #fff !important;
+    border-left: 1px solid #fff;
+    text-align: center;
+}
+
+.navbar-nav > .active > a {
+    font-weight: bolder;    
+}
+.nav-item > a:hover {
+    color: #83D1E1 !important;
+}
+.dropdown-item{
+    background-color: #83D1E1 !important;
+    color: #212529 !important;
+    border: 2px solid #fff !important;
+}
+.dropdown-item:hover{
+    color: #fff!important;
+    
+}
+.dropdown:hover .dropdown-menu {
+    display: block;
+ }
+
+ .selected{
+    background-color: #198754 !important;
+ }
+ 
+
