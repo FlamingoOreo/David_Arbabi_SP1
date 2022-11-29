@@ -111,6 +111,19 @@ function employeeFactory(type,options) {
    
 }
 
-
-
+function populateTable(value){
+    let staffMember = employeeFactory('Staff');
+    let memberValues = Object.values(staffMember);
+    let rows = $("#dashboardBoard tbody").children();
+    if(value>rows.length-1){
+        return;
+    }
+    let currentRow = rows[value].cells
+    currentRow.item(0).innerHTML = `<img src=${memberValues[2]} />`;
+    currentRow.item(1).innerText = memberValues[0]
+    currentRow.item(2).innerText = memberValues[1]
+    currentRow.item(3).innerText = memberValues[3]
+    currentRow.item(4).innerText = memberValues[4]
+    populateTable(value+1)
+}
 
