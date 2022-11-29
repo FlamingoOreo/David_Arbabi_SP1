@@ -1,4 +1,4 @@
-function digitalClock() {
+function digitalClock() {  // Clock Functionality 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     setInterval(() => {
         let currentDate = new Date();
@@ -10,7 +10,7 @@ function digitalClock() {
     }, 1000);
 };
 
-$("#dashboardBoard tr").click(function(){
+$("#dashboardBoard tr").click(function(){ // Staff Selection 
     if(this.parentElement.nodeName == "THEAD"){
         return 
     }
@@ -35,7 +35,7 @@ $("#dashboardBoard tr").click(function(){
     }
 });
 
-$("#deliveryBoard tr").click(function(){
+$("#deliveryBoard tr").click(function(){ // Driver Selection
     if(this.parentElement.nodeName == "THEAD"){
         return
     }
@@ -100,6 +100,7 @@ function employeeFactory(type,options) {
         $.ajax({
             url:'https://randomuser.me/api/',
             async: false,  
+            dataType: 'json',
             success:function(data) {
                result = data.results[0]; 
             }
@@ -110,14 +111,24 @@ function employeeFactory(type,options) {
     }
    
 }
+const staffEmployees = []
 
-function populateTable(value){
-    let staffMember = employeeFactory('Staff');
-    let memberValues = Object.values(staffMember);
-    let rows = $("#dashboardBoard tbody").children();
-    if(value>rows.length-1){
+function populateTable(value,update){
+    if(update){
+        let memberValues = Object.values(staffEmployees)[value];
+        let rows = $("#dashboardBoard tbody").children();
+        let currentRow = rows[value].cells
+        currentRow.item(4).innerText = memberValues.status
         return;
     }
+    if(value>4){
+        return;
+    }
+    let staffMember = employeeFactory('Staff');
+    staffEmployees.push(staffMember);
+    let memberValues = Object.values(staffMember);
+    let rows = $("#dashboardBoard tbody").children();
+    
     let currentRow = rows[value].cells
     currentRow.item(0).innerHTML = `<img src=${memberValues[2]} />`;
     currentRow.item(1).innerText = memberValues[0]
@@ -125,5 +136,45 @@ function populateTable(value){
     currentRow.item(3).innerText = memberValues[3]
     currentRow.item(4).innerText = memberValues[4]
     populateTable(value+1)
+}
+
+function staffOut(){
+    let board = $("#dashboardBoard tbody").children();
+    let selected = []
+    Array.prototype.forEach.call(board, child => {
+         if($(child).hasClass('selected')){
+            selected.push(child);
+         }
+         
+      });
+   selected.forEach(currentEmployees =>{
+    let selectedNames = currentEmployees.cells.item(1).innerText;
+    staffEmployees.forEach(staff=>{
+        if( selectedNames == staff.name){
+            staff.status = "Out"
+            populateTable(staffEmployees.indexOf(staff),true)
+        }
+    });
+   })
+}
+
+function staffIn(){
+    let board = $("#dashboardBoard tbody").children();
+    let selected = []
+    Array.prototype.forEach.call(board, child => {
+         if($(child).hasClass('selected')){
+            selected.push(child);
+         }
+         
+      });
+   selected.forEach(currentEmployees =>{
+    let selectedNames = currentEmployees.cells.item(1).innerText;
+    staffEmployees.forEach(staff=>{
+        if( selectedNames == staff.name){
+            staff.status = "In"
+            populateTable(staffEmployees.indexOf(staff),true)
+        }
+    });
+   })
 }
 
