@@ -1,3 +1,4 @@
 # David_Arbabi_SP1
 
-Nothing for now
+In this project, we have also included some external packages
+Namely bootstrap, Jquery and Sweetalerts. 

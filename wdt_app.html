@@ -7,10 +7,11 @@
     <title>WDT APP PROTOTYPE</title>
     <link href="styles.css" rel="stylesheet">
     <script type="text/javascript" src='js/bootstrap.min.js'></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
     <link rel="stylesheet" href="css/bootstrap.css" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="position-relative" onload="digitalClock()">
+<body class="position-relative" onload="digitalClock(), populateTable(0)">
+   
     <nav class="navbar navbar-expand-lg navbar-light bg-light m-1">
         <ul class="navbar-nav">
           <li class="nav-item active">
@@ -53,64 +54,64 @@
                 <th scope="col">Duration</th>
                 <th scope="col">Expected Return Time</th>
             </thead>
-            <tbody>
+            <tbody">
             <tr>
-                <td>x</td>
-                <td>x</td>
-                <td>x</td>         
-                <td>x</td>  
-                <td>test</td>  
-                <td>x</td> 
-                <td>x</td>  
-                <td>x</td>    
+                <td></td>
+                <td></td>
+                <td></td>         
+                <td></td>  
+                <td></td>  
+                <td></td> 
+                <td></td>  
+                <td></td>    
             </tr>
             <tr>
-                <td>x</td>
-                <td>x</td>
-                <td>x</td>         
-                <td>x</td>  
-                <td>x</td>  
-                <td>x</td> 
-                <td>x</td>  
-                <td>x</td> 
+                <td></td>
+                <td></td>
+                <td></td>         
+                <td></td>  
+                <td></td>  
+                <td></td> 
+                <td></td>  
+                <td></td> 
             </tr>
         <tr>
-                <td>x</td>
-                <td>x</td>
-                <td>x</td>         
-                <td>x</td>  
-                <td>x</td>  
-                <td>x</td> 
-                <td>x</td>  
-                <td>x</td> 
+                <td></td>
+                <td></td>
+                <td></td>         
+                <td></td>  
+                <td></td>  
+                <td></td> 
+                <td></td>  
+                <td></td> 
         </tr>
         <tr>
-            <td>x</td>
-            <td>x</td>
-            <td>x</td>         
-            <td>x</td>  
-            <td>x</td>  
-            <td>x</td> 
-            <td>x</td>  
-            <td>x</td> 
+            <td></td>
+            <td></td>
+            <td></td>         
+            <td></td>  
+            <td></td>  
+            <td></td> 
+            <td></td>  
+            <td></td> 
     </tr>
         <tr>
-            <td>x</td>
-            <td>x</td>
-            <td>x</td>         
-            <td>x</td>  
-            <td>x</td>  
-            <td>x</td> 
-            <td>x</td>  
-            <td>x</td> 
+            <td></td>
+            <td></td>
+            <td></td>         
+            <td></td>  
+            <td></td>  
+            <td></td> 
+            <td></td>  
+            <td></td> 
         </tr>
         <tbody>     
         </table>
         <div class="container">
             <div class="row">
-             <button type="button" class="btn positive col-1">Out</button>
+             <button type="button" class="btn positive col-1" id="outButton" onclick="staffOut()">Out</button>
              <span class="col-10"> </span>
-             <button type="button" class="btn negative col-1">In</button>
+             <button type="button" class="btn negative col-1" id="inButton" onclick="staffIn()">In</button>
              </div>
         </div>
     </div>
@@ -187,6 +188,5 @@
 
     <script src="jquery-3.6.0.js"></script>
     <script src="wdt_app.js"></script>
-
 </body>
 </html>

@@ -90,3 +90,7 @@ nav{
     background-color: #198754 !important;
  }
  
+ .modal-title{
+    width: 100%;
+    text-align: center;
+  }
