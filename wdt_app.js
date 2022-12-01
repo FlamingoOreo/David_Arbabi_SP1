@@ -3,8 +3,16 @@ function digitalClock() {  // Clock Functionality
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     setInterval(() => {
         let currentDate = new Date();
+        let minutes = currentDate.getMinutes();
+        let seconds = currentDate.getSeconds();
+        if(minutes<10){   // To add a 0 before the minutes/seconds
+            minutes = `0${minutes}`
+        }
+        if(seconds<10){
+            seconds = `0${seconds}`
+        }
         let date = `${currentDate.getDate()} ${(monthNames[currentDate.getMonth()])} ${currentDate.getFullYear()}`;
-        let time =  `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+        let time =  `${currentDate.getHours()}:${minutes}:${seconds}`;
         let string = (`DATE ${date} TIME ${time}`);
 
         $("#timeandDate").text(string);
@@ -148,6 +156,7 @@ function updateTable(value){
 // #endregion
 // #region staffOut
 function staffOut(){ 
+    // $('#staffLate').toast('show');
     let board = $("#dashboardBoard tbody").children(); // Every table row of the body
     let selected = []
     Array.prototype.forEach.call(board, child => {  // Finds every element that is selected on the table and adds the name value to an array
