@@ -16,10 +16,11 @@ function digitalClock() {  // Clock Functionality
         let string = (`DATE ${date} TIME ${time}`);
 
         $("#timeandDate").text(string);
-    }, 1000);
+    }, 1000
+    );
 };
 // #endregion
-// #region staffSelection
+// #region staff&DriverSelection
 $("#dashboardBoard tr").click(function(){ // Staff Selection
     if(this.parentElement.nodeName == "THEAD"){
         return 
@@ -44,7 +45,7 @@ $("#dashboardBoard tr").click(function(){ // Staff Selection
     }
 });
 
-$("#deliveryBoard tr").click(function(){ // Driver Selection
+$("#deliveryBoard tbody").on( "click", "tr", function(){ // Driver Selection
     if(this.parentElement.nodeName == "THEAD"){
         return
     }
@@ -74,7 +75,7 @@ class Employee{
     this.name = data.name.first;
     this.surname = data.name.last;
  }
-}
+};
 
 class StaffMember extends Employee{
     constructor(data){
@@ -85,11 +86,7 @@ class StaffMember extends Employee{
     this.outTime = "";
     this.duration = "";
     this.expectedReturn = "";
-}staffMemberIsLate(){
-    return `${this.name} is late! They left at ${this.outTime}`;
-}
-
-}
+}};
 class DeliveryDriver extends Employee{
     constructor(data){
     super(data);
@@ -97,14 +94,11 @@ class DeliveryDriver extends Employee{
     this.telephone = data.telephone
     this.address = data.address
     this.returnTime = data.returnTime
-}deliveryDriverIsLate(){
-    return `${this.name} is late! They were supposed to return  at ${this.returnTime}`;
-}
-}
+}};
 
 // #endregion
-// #region employeeFactory
-function employeeFactory(type,options) {
+// #region staffUserGet
+function staffUserGet(type,options) {
     switch(type){
         case 'Staff':
         $.ajax({
@@ -128,7 +122,7 @@ function populateTable(value){
     if(value>4){
         return;
     }
-    let staffMember = employeeFactory('Staff');
+    let staffMember = staffUserGet('Staff');
     staffEmployees.push(staffMember);
     let memberValues = Object.values(staffMember);
     let rows = $("#dashboardBoard tbody").children();
@@ -156,7 +150,6 @@ function updateTable(value){
 // #endregion
 // #region staffOut
 function staffOut(){ 
-    // $('#staffLate').toast('show');
     let board = $("#dashboardBoard tbody").children(); // Every table row of the body
     let selected = []
     Array.prototype.forEach.call(board, child => {  // Finds every element that is selected on the table and adds the name value to an array
@@ -167,17 +160,23 @@ function staffOut(){
     staffEmployees.forEach(async staff=>{ // Cycles through every staff member object created during initial load
        if(selected.includes(staff.name)){ //If there is a match
         if(selected.length>1){   // If there is more than one selection
-        let value = prompt(`Enter out-time for ${staff.name} in minutes:`)
-        if(isNaN(value)){
-            alert("You must enter a number!")
+        let minutes = prompt(`Enter out-time for ${staff.name} in minutes:`)
+        if(isNaN(minutes)){
+            alert("You must enter a number!");
             return;
         }
-        if(value != null){
+        if(minutes != null){
             const now = new Date();
             staff.outTime = now.getHours() + ':' + ((now.getMinutes()<10?'0':'') + now.getMinutes());
             staff.status = "Out";
-            staff.duration = toHoursAndMinutes(value);
-            staff.expectedReturn = returnTimer(now.getHours()*60 + now.getMinutes()+parseInt(value),0);
+            staff.duration = toHoursAndMinutes(minutes);
+            staff.expectedReturn = returnTimer(now.getHours()*60 + now.getMinutes()+parseInt(minutes),0);
+            setTimeout(()=>{
+                if(staff.status == "Out"){
+                    return staffMemberIsLate(staff);
+                }
+                return;
+            },(parseInt(minutes)*60)*1000);
             return updateTable(staffEmployees.indexOf(staff));
         } 
        }
@@ -199,6 +198,12 @@ function staffOut(){
             staff.status = "Out";
             staff.duration = toHoursAndMinutes(minutes);
             staff.expectedReturn = returnTimer(now.getHours()*60 + now.getMinutes()+parseInt(minutes),0);
+            setTimeout(()=>{
+                if(staff.status == "Out"){
+                    return staffMemberIsLate(staff);
+                }
+                return;
+            },(parseInt(minutes)*60)*1000);
             return updateTable(staffEmployees.indexOf(staff));
           }
         }
@@ -229,7 +234,7 @@ function staffIn(){
 function toHoursAndMinutes(totalMinutes) {
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    return `${hours} hr: ${minutes} min`;
+    return `${hours} hr : ${minutes} min`;
 }
 function returnTimer(totalMinutes,count) {
     let hours = Math.floor(totalMinutes / 60);
@@ -249,4 +254,49 @@ function returnTimer(totalMinutes,count) {
     return `${hours}:${minutes}`;
 }
 // #endregion
+// #region staffMemberIsLate
+function staffMemberIsLate(staff){
+    $("#delayBody img").attr("src",staff.picture);
+    $("#delayBody strong").text(`Time out-of-office: ${staff.duration}`);
+    $("#delayBody span").text(`${staff.name} ${staff.surname} is delayed.`);
+    return $("#staffLate").toast('show');
+}
 
+// #endregion
+// #region addDelivery
+function addDelivery(){
+    const deliveryObject = {
+        vehicle: "",
+        name: "",
+        surname: "",
+        telephone: 0,
+        address: "",
+        returnTime: ""
+    };
+    let count = 0
+    Object.keys(deliveryObject).forEach(key=>{  // Fills the deliveryObject
+        let inputFields = $("#scheduleBoard tbody").children();
+        deliveryObject[key] = inputFields[0].cells[count].children[0].value;
+        count++
+    });
+    console.log(validateDelivery(deliveryObject));
+        let result = (deliveryObject.vehicle == "Car") ? '<i class="bi bi-car-front"></i>' :  '<i class="bi bi-bicycle"></i>'
+        $("#deliveryBoard tbody").prepend(`<tr><td>${result}</td><td>${deliveryObject.name}</td><td>${deliveryObject.surname}</td><td>${deliveryObject.telephone}</td><td>${deliveryObject.address}</td><td>${deliveryObject.returnTime}</td></tr>`)
+};
+function clearDelivery(){
+    $("#deliveryBoard .selected").remove()
+};
+
+// #endregion
+// #region validateDelivery
+function validateDelivery(driver){
+    Object.keys(driver).forEach(property=>{
+        if(driver[property] == ""){
+            alert(`${property} cannt be empty`)
+        }
+    })
+    if(isNaN(driver.telephone)){
+        alert(`Telephone number has to include numbers`)
+    }
+}
+// #endregion
