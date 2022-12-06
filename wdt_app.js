@@ -99,6 +99,7 @@ class DeliveryDriver extends Employee{
 // #endregion
 // #region staffUserGet
 function staffUserGet(type,options) {
+    // This function is responsible for inheritance object creation.
     switch(type){
         case 'Staff':
         $.ajax({
@@ -204,11 +205,18 @@ function staffOut(){
                 }
                 return;
             },(parseInt(minutes)*60)*1000);
+            Swal.fire({
+                position: 'middle',
+                icon: 'success',
+                title: `${staff.name} is now out until: ${staff.expectedReturn}`,
+                showConfirmButton: false,
+                timer: 2000
+            })
             return updateTable(staffEmployees.indexOf(staff));
           }
         }
     }
-    })}
+    })};
 // #endregion
 // #region staffIn
 function staffIn(){
@@ -265,23 +273,47 @@ function staffMemberIsLate(staff){
 // #endregion
 // #region addDelivery
 function addDelivery(){
-    const deliveryObject = {
-        vehicle: "",
-        name: "",
-        surname: "",
-        telephone: 0,
-        address: "",
-        returnTime: ""
+    const input = $("#scheduleBoard tbody").children()[0]
+    const driverObject = {
+        vehicle: input.cells[0].children[0].value,
+        name: {
+            first: input.cells[1].children[0].value,
+            last: input.cells[2].children[0].value,
+        },
+        telephone: input.cells[3].children[0].value,
+        address: input.cells[4].children[0].value,
+        returnTime: input.cells[5].children[0].value,
     };
-    let count = 0
-    Object.keys(deliveryObject).forEach(key=>{  // Fills the deliveryObject
-        let inputFields = $("#scheduleBoard tbody").children();
-        deliveryObject[key] = inputFields[0].cells[count].children[0].value;
-        count++
-    });
-    console.log(validateDelivery(deliveryObject));
-        let result = (deliveryObject.vehicle == "Car") ? '<i class="bi bi-car-front"></i>' :  '<i class="bi bi-bicycle"></i>'
-        $("#deliveryBoard tbody").prepend(`<tr><td>${result}</td><td>${deliveryObject.name}</td><td>${deliveryObject.surname}</td><td>${deliveryObject.telephone}</td><td>${deliveryObject.address}</td><td>${deliveryObject.returnTime}</td></tr>`)
+    // Generates the driver object 
+    const driver = staffUserGet('Delivery', driverObject);
+    if(validateDelivery(driver)){
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: `Delivery for ${driver.returnTime} added`,
+            showConfirmButton: false,
+            timer: 1500
+        })
+        const result = (driver.vehicle == "Car") ? '<i class="bi bi-car-front"></i>' :  '<i class="bi bi-bicycle"></i>';
+
+        $("#deliveryBoard tbody").prepend(`<tr><td>${result}</td><td>${driver.name}</td><td>${driver.surname}</td><td>${driver.telephone}</td><td>${driver.address}</td><td>${driver.returnTime}</td></tr>`);
+    };
+    const driverMinutes = parseInt(driver.returnTime.split(":")[0]*60) + parseInt(driver.returnTime.split(":")[1]);
+    const now = new Date();
+    const hours = now.getHours();
+    const mintutes = now.getMinutes();
+    const currentMinutes = (hours*60) + mintutes;
+    const difference = driverMinutes-currentMinutes;
+    setTimeout(()=>{
+        const array = $("#deliveryBoard tbody").children()
+        Array.prototype.forEach.call(array, element => {
+        if(driver.name == element.cells[1].innerText && driver.surname == element.cells[2].innerText && driver.telephone ==element.cells[3].innerText && driver.address == element.cells[4].innerText && driver.returnTime == element.cells[5].innerText){
+            return deliveryDriverIsLate(driver);
+        }
+    })
+        return;
+    },(parseInt(difference)*60)*1000);
+    
 };
 function clearDelivery(){
     $("#deliveryBoard .selected").remove()
@@ -290,13 +322,53 @@ function clearDelivery(){
 // #endregion
 // #region validateDelivery
 function validateDelivery(driver){
+    const faultyInput = [];
     Object.keys(driver).forEach(property=>{
         if(driver[property] == ""){
-            alert(`${property} cannt be empty`)
+            const first = property.charAt(0); //Capitalize the fault
+            const upper = first.toUpperCase();
+            faultyInput.push(upper+property.substring(1));
         }
-    })
+    });
+    if(faultyInput.length>0){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: `${faultyInput} field required!`,
+          })
+        return false;
+    };
     if(isNaN(driver.telephone)){
-        alert(`Telephone number has to include numbers`)
-    }
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Telephone number must include numbers!',
+            footer: `${driver.telephone} is not a valid number!`
+
+          })
+        return false;
+    };
+    return true;
+    
 }
 // #endregion
+// #region deliveryDriver
+function deliveryDriverIsLate(driver){
+    $("#driverdelayBody strong").text(`Estimated return time: ${driver.returnTime}`);
+    $("#driverdelayBody span").text(`${driver.name} ${driver.surname} is delayed.`)
+    $("#driverdelayBody #address").text(`Address: ${driver.address}`);
+    $("#driverdelayBody #telephone").text(`Telephone: ${driver.telephone}`);
+    return $("#driverLate").toast('show');
+
+}
+
+// #endregion
+
+const input = '13:45';
+const [hour, minutes] = input.split(':');
+
+const today = new Date();
+today.setHours(hour);
+today.setMinutes(minutes);
+
+console.log(today);
