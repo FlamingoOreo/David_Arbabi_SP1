@@ -136,10 +136,22 @@ function updateTable(value){
     let memberValues = Object.values(staffEmployees)[value];
     let rows = $("#dashboardBoard tbody").children();
     let currentRow = rows[value].cells;
-    currentRow.item(4).innerText = memberValues.status;
-    currentRow.item(5).innerText = memberValues.outTime;
-    currentRow.item(6).innerText = memberValues.duration;
-    currentRow.item(7).innerText = memberValues.expectedReturn;
+    $(currentRow.item(4)).fadeOut(300,'linear',function(){
+        $(currentRow.item(4)).text(memberValues.status);
+    });
+    $(currentRow.item(4)).fadeIn(900,'linear');
+    $(currentRow.item(5)).fadeOut(300,'linear',function(){
+        $(currentRow.item(5)).text(memberValues.outTime);
+    });
+    $(currentRow.item(5)).fadeIn(900,'linear');
+    $(currentRow.item(6)).fadeOut(300,'linear',function(){
+        $(currentRow.item(6)).text(memberValues.duration);
+    });
+    $(currentRow.item(6)).fadeIn(900,'linear');
+    $(currentRow.item(7)).fadeOut(300,'linear',function(){
+        $(currentRow.item(7)).text(memberValues.expectedReturn);
+    });
+    $(currentRow.item(7)).fadeIn(900,'linear');
     return;
 }
 // #endregion
@@ -200,7 +212,7 @@ function staffOut(){
                 return;
             },(parseInt(minutes)*60)*1000);
             Swal.fire({
-                position: 'middle',
+                position: 'center',
                 icon: 'success',
                 title: `${staff.name} is now out until: ${staff.expectedReturn}`,
                 showConfirmButton: false,
@@ -310,7 +322,10 @@ function addDelivery(){
     
 };
 function clearDelivery(){
-    $("#deliveryBoard .selected").remove()
+    $("#deliveryBoard .selected").fadeOut(500,'linear',function(){
+        $("#deliveryBoard .selected").remove();
+
+    })
 };
 
 // #endregion

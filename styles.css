@@ -4,24 +4,23 @@ thead{
     font-family: Consolas;
     text-align: center;
 }
+
 td{
     font-family: Calibri;
     background-color: #83D1E1;
     color: #212529;
+    text-align: center !important;
 
 }
-
-
 table img{
     border: 1px solid #83D1E1;
     border-radius: 15px;
  }
 
-
 table.table-bordered{
-    border-width: thin;
+    border-width: thin !important;
     border: 2px solid #212529;
-    border-radius: 15px;
+    border-radius: 15px !important;
  
   }
 
@@ -50,11 +49,9 @@ h1,p{
     background-color: #198754;
     color: #fff;
 }
-
 .container{
     margin-top: 10px;
 }
-
 nav{
     font-family: Consolas;
 }
@@ -64,7 +61,6 @@ nav{
     border-left: 1px solid #fff;
     text-align: center;
 }
-
 .navbar-nav > .active > a {
     font-weight: bolder;    
 }
