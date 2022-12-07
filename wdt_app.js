@@ -21,10 +21,7 @@ function digitalClock() {  // Clock Functionality
 };
 // #endregion
 // #region staff&DriverSelection
-$("#dashboardBoard tr").click(function(){ // Staff Selection
-    if(this.parentElement.nodeName == "THEAD"){
-        return 
-    }
+$("#dashboardBoard tbody").on( "click", "tr", function(){ // Staff Selection
     if($(this).hasClass('selected')){
         if(window.event.ctrlKey){
             if($(this).hasClass('selected')){
@@ -46,9 +43,6 @@ $("#dashboardBoard tr").click(function(){ // Staff Selection
 });
 
 $("#deliveryBoard tbody").on( "click", "tr", function(){ // Driver Selection
-    if(this.parentElement.nodeName == "THEAD"){
-        return
-    }
     if($(this).hasClass('selected')){
         if(window.event.ctrlKey){
             if($(this).hasClass('selected')){
@@ -120,21 +114,21 @@ function staffUserGet(type,options) {
 // #region populateTable
 const staffEmployees = []
 function populateTable(value){
-    if(value>4){
+    if(value>4){ // This fills the table to only 5 for now, changing this number adds more/less staff
         return;
     }
+    $("#dashboardBoard tbody").append(`<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
     let staffMember = staffUserGet('Staff');
     staffEmployees.push(staffMember);
     let memberValues = Object.values(staffMember);
     let rows = $("#dashboardBoard tbody").children();
-    
-    let currentRow = rows[value].cells
+    let currentRow = rows[value].cells;
     currentRow.item(0).innerHTML = `<img src=${memberValues[2]} />`;
-    currentRow.item(1).innerText = memberValues[0]
-    currentRow.item(2).innerText = memberValues[1]
-    currentRow.item(3).innerText = memberValues[3]
-    currentRow.item(4).innerText = memberValues[4]
-    populateTable(value+1)
+    currentRow.item(1).innerText = memberValues[0];
+    currentRow.item(2).innerText = memberValues[1];
+    currentRow.item(3).innerText = memberValues[3];
+    currentRow.item(4).innerText = memberValues[4];
+    populateTable(value+1);
 }
 // #endregion
 // #region updateTable
@@ -363,12 +357,17 @@ function deliveryDriverIsLate(driver){
 }
 
 // #endregion
-
-const input = '13:45';
-const [hour, minutes] = input.split(':');
-
-const today = new Date();
-today.setHours(hour);
-today.setMinutes(minutes);
-
-console.log(today);
+// #region buttonAnimation
+$("button").hover(
+  function() {
+    if($(this).is(":animated")) {
+        return;
+      }
+    $(this).animate({ fontSize: "20px" }, 300);
+  },
+  function() {
+    
+    $(this).animate({ fontSize: "16px" }, 300);
+  }
+);
+// #endregion
