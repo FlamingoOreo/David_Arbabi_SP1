@@ -12,8 +12,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="position-relative" onload="digitalClock(), populateTable(0)">
-   
-    <nav class="navbar navbar-expand-lg navbar-light bg-light m-1">
+       <nav class="navbar navbar-expand-lg navbar-light bg-light m-1">
         <ul class="navbar-nav">
           <li class="nav-item active">
             <a class="nav-item nav-link" href="#"> Dashboard</a>
@@ -38,13 +37,13 @@
         </ul>
     </nav>
     </body>
-<div class="container border border-dark">
+<div class="container border border-dark" id="zoomContainer">
     <div class="container">
         <img src="logo.png" class="img-fluid alt="Logo WDT" width="200px" height="200px">
         <h1 class="display-5" style="display: inline; text-align:center">Reception Management Dashboard Staff</h1>
     </div>
         <div class="container" id="dashboardBoard">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover responsive">
             <thead>
                 <th scope="col" >Picture</th>
                 <th scope="col">Name</th>
@@ -90,14 +89,16 @@
             </td>
             <td> <input type="text"></td>
             <td><input type="text"></td>         
-            <td><input type="tel"></td>  
+            <td><input type="text" id="phone-input" onchange="checkPhoneNumber()" />
+                <p id="error-message" class="error"></p></td>  
             <td><input type="text"></td>  
-            <td><input type="time"></td>    
+            <td><input type="time" id="appt" name="appt" min="07:00" max="17:00" required>
+            </td>    
         </tr>
 
-    <tbody>     
+    </tbody>    
     </table>
-    <div class="container">
+    <div class="container" id="">
         <div class="row">
          <span class="col-11"> </span>
          <button type="button" class="btn negative col-1" onclick="addDelivery()">Add</button>
@@ -131,39 +132,8 @@
          <span class="col-9"> </span>
          <p class="col-3" id="timeandDate"></p>
          </div>
-
+         <div id="toast-container"></div>
 </div>
-<div class="toast position-fixed bottom-50 end-0" role="alert" aria-live="assertive" aria-atomic="true" id="staffLate">
-    <div class="toast-header">
-      <strong class="me-auto text-danger">Staff Delay Alert!</strong>
-      <i class="bi bi-bell-fill"></i>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body" id="delayBody">
-        <img src="..." class="rounded me-2" alt="staffPicture">
-        <span></span>
-        <br>
-        <br>
-        <strong class="text-mute"></strong>
-    </div>
-  </div>
-  <div class="toast position-fixed bottom-50 end-0" role="alert" aria-live="assertive" aria-atomic="true" id="driverLate">
-    <div class="toast-header">
-      <strong class="me-auto text-danger">Delivery Driver Delay Alert!</strong>
-      <i class="bi bi-bell-fill"></i>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body" id="driverdelayBody">
-        <span></span>
-        <br>
-        <span id="address"></span>
-        <br>
-        <span id="telephone"></span>
-        <br>
-        <br>
-        <strong class="text-mute"></strong>
-    </div>
-  </div>
     <script src="jquery-3.6.0.js"></script>
     <script src="wdt_app.js"></script>
 </body>

@@ -70,7 +70,6 @@ class Employee{
     this.surname = data.name.last;
  }
 };
-
 class StaffMember extends Employee{
     constructor(data){
     super(data);
@@ -109,7 +108,7 @@ function staffUserGet(type,options) {
             return new DeliveryDriver(options);
     }
    
-}
+};
 // #endregion
 // #region populateTable
 const staffEmployees = []
@@ -117,17 +116,9 @@ function populateTable(value){
     if(value>4){ // This fills the table to only 5 for now, changing this number adds more/less staff
         return;
     }
-    $("#dashboardBoard tbody").append(`<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
     let staffMember = staffUserGet('Staff');
     staffEmployees.push(staffMember);
-    let memberValues = Object.values(staffMember);
-    let rows = $("#dashboardBoard tbody").children();
-    let currentRow = rows[value].cells;
-    currentRow.item(0).innerHTML = `<img src=${memberValues[2]} />`;
-    currentRow.item(1).innerText = memberValues[0];
-    currentRow.item(2).innerText = memberValues[1];
-    currentRow.item(3).innerText = memberValues[3];
-    currentRow.item(4).innerText = memberValues[4];
+    $("#dashboardBoard tbody").append(`<tr><td><img src=${staffMember.picture} /></td><td>${staffMember.name}</td><td>${staffMember.surname}</td><td>${staffMember.email}</td><td>${staffMember.status}</td><td></td><td></td><td></td></tr>`);
     populateTable(value+1);
 }
 // #endregion
@@ -153,88 +144,72 @@ function updateTable(value){
     });
     $(currentRow.item(7)).fadeIn(900,'linear');
     return;
-}
+};
 // #endregion
 // #region staffOut
-function staffOut(){ 
+async function staffOut(){ 
     let board = $("#dashboardBoard tbody").children(); // Every table row of the body
-    let selected = []
+    let selectedName = []
+    let selectedLastName = []
     Array.prototype.forEach.call(board, child => {  // Finds every element that is selected on the table and adds the name value to an array
          if($(child).hasClass('selected')){
-            selected.push(child.cells.item(1).innerText);
+            selectedName.push(child.cells.item(1).innerText);
+            selectedLastName.push(child.cells.item(2).innerText);
          }
       });
-    staffEmployees.forEach(async staff=>{ // Cycles through every staff member object created during initial load
-       if(selected.includes(staff.name)){ //If there is a match
-        if(selected.length>1){   // If there is more than one selection
-        let minutes = prompt(`Enter out-time for ${staff.name} in minutes:`)
-        if(isNaN(minutes)){
-            alert("You must enter a number!");
-            return;
-        }
-        if(minutes != null){
-            const now = new Date();
-            staff.outTime = now.getHours() + ':' + ((now.getMinutes()<10?'0':'') + now.getMinutes());
-            staff.status = "Out";
-            staff.duration = toHoursAndMinutes(minutes);
-            staff.expectedReturn = returnTimer(now.getHours()*60 + now.getMinutes()+parseInt(minutes),0);
-            setTimeout(()=>{
-                if(staff.status == "Out"){
-                    return staffMemberIsLate(staff);
-                }
-                return;
-            },(parseInt(minutes)*60)*1000);
-            return updateTable(staffEmployees.indexOf(staff));
-        } 
-       }
-       else{  // If there is only one selection we do a Swal.fire instead of prompts 
-        const {value: minutes} = await Swal.fire({
-            title: 'Update Staff Member',
-            input: 'number',
-            inputLabel: `Enter out-time for ${staff.name}`,
+      for (let i = 0; i < staffEmployees.length; i++) {
+        const staff = staffEmployees[i];
+        if (selectedName.includes(staff.name) && selectedLastName.includes(staff.surname)) { //If there is a match
+          await Swal.fire({
+            title: `Enter out-time for ${staff.name} in minutes:`,
+            text: 'Please enter a number:',
+            input: 'text',
             showCancelButton: true,
-            inputValidator: (value) => { // If user types no value
-              if (!value) {
-                return 'Write out-time in minutes!'
-              }
+            confirmButtonText: 'Submit',
+            inputValidator: value => {
+              // Validate the input to make sure it is a number
+              if (isNaN(value)) {
+                return 'You must enter a number!';
+              } 
             }
-          })
-          if(minutes){ // If user types a value
-            const now = new Date();
-            staff.outTime = now.getHours() + ':' + ((now.getMinutes()<10?'0':'') + now.getMinutes());
-            staff.status = "Out";
-            staff.duration = toHoursAndMinutes(minutes);
-            staff.expectedReturn = returnTimer(now.getHours()*60 + now.getMinutes()+parseInt(minutes),0);
-            setTimeout(()=>{
-                if(staff.status == "Out"){
-                    return staffMemberIsLate(staff);
+          }).then(result => {
+            if (result.value) {
+              // If the user clicks the confirm button, get the value from the input field
+              let minutes = result.value;
+              const now = new Date();
+              staff.outTime = now.getHours() + ':' + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes());
+              staff.status = 'Out';
+              staff.duration = toHoursAndMinutes(minutes);
+              staff.expectedReturn = returnTimer(now.getHours() * 60 + now.getMinutes() + parseInt(minutes),0
+              );
+              setTimeout(() => {
+                if (staff.status == 'Out') {
+                  return staffMemberIsLate(staff);
                 }
                 return;
-            },(parseInt(minutes)*60)*1000);
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: `${staff.name} is now out until: ${staff.expectedReturn}`,
-                showConfirmButton: false,
-                timer: 2000
-            })
-            return updateTable(staffEmployees.indexOf(staff));
-          }
+              }, (parseInt(minutes) * 60) * 1000);
+              return updateTable(i);
+            }
+          });
         }
-    }
-    })};
+      }};
 // #endregion
 // #region staffIn
 function staffIn(){
     let board = $("#dashboardBoard tbody").children();  // Every table row of the body
-    let selected = []
+    let selectedName = []
+    let selectedSurnameName = []
     Array.prototype.forEach.call(board, child => {  // Finds every element that is selected on the table and adds the name value to an array
          if($(child).hasClass('selected')){
-            selected.push(child.cells.item(1).innerText);
+            selectedName.push(child.cells.item(1).innerText);
+            selectedSurnameName.push(child.cells.item(2).innerText);
          }
       });
     staffEmployees.forEach(staff=>{ // Cycles through every staff member object created during initial load
-       if(selected.includes(staff.name)){ //If there is a match 
+       if(selectedName.includes(staff.name) && selectedSurnameName.includes(staff.surname)){ //If there is a match 
+        if(staff.status == "In"){
+            return;
+        };
             staff.status = "In";
             staff.outTime = "";
             staff.duration = "";
@@ -269,13 +244,37 @@ function returnTimer(totalMinutes,count) {
 }
 // #endregion
 // #region staffMemberIsLate
-function staffMemberIsLate(staff){
-    $("#delayBody img").attr("src",staff.picture);
-    $("#delayBody strong").text(`Time out-of-office: ${staff.duration}`);
-    $("#delayBody span").text(`${staff.name} ${staff.surname} is delayed.`);
-    return $("#staffLate").toast('show');
-}
+function staffMemberIsLate(staff) {
+    const toast = $(`
+      <div class="toast position-fixed bottom-50 end-0 staff-late-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto text-danger">Staff Delay Alert!</strong>
+          <i class="bi bi-bell-fill"></i>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="delayBody">
+            <img src="..." class="rounded me-2" alt="staffPicture">
+            <span></span>
+            <br>
+            <br>
+            <strong class="text-mute"></strong>
+        </div>
+      </div>
+    `);
+  
+    toast.find('.toast-body img').attr('src', staff.picture);
+    toast.find('.toast-body strong').text(`Time out-of-office: ${staff.duration}`);
+    toast.find('.toast-body span').text(`${staff.name} ${staff.surname} is delayed.`);
 
+    toast.appendTo('#toast-container');
+    toast.appendTo('#toast-container');
+    toast.toast('show');
+
+    setTimeout(()=>{
+      toast.remove();
+    },5000)
+
+};
 // #endregion
 // #region addDelivery
 function addDelivery(){
@@ -286,7 +285,7 @@ function addDelivery(){
             first: input.cells[1].children[0].value,
             last: input.cells[2].children[0].value,
         },
-        telephone: input.cells[3].children[0].value,
+        telephone: parseInt(input.cells[3].children[0].value),
         address: input.cells[4].children[0].value,
         returnTime: input.cells[5].children[0].value,
     };
@@ -347,12 +346,12 @@ function validateDelivery(driver){
           })
         return false;
     };
-    if(isNaN(driver.telephone)){
+    if(!checkPhoneNumber()){
         Swal.fire({
             icon: 'error',
-            title: 'Oops...',
-            text: 'Telephone number must include numbers!',
-            footer: `${driver.telephone} is not a valid number!`
+            title: `  Not a valid number!`,
+            text: 'Telephone number must be at least 7 digits & only digits!',
+            footer: `Example 123456789.`
 
           })
         return false;
@@ -360,16 +359,56 @@ function validateDelivery(driver){
     return true;
     
 }
-// #endregion
-// #region deliveryDriver
-function deliveryDriverIsLate(driver){
-    $("#driverdelayBody strong").text(`Estimated return time: ${driver.returnTime}`);
-    $("#driverdelayBody span").text(`${driver.name} ${driver.surname} is delayed.`)
-    $("#driverdelayBody #address").text(`Address: ${driver.address}`);
-    $("#driverdelayBody #telephone").text(`Telephone: ${driver.telephone}`);
-    return $("#driverLate").toast('show');
+function checkPhoneNumber() {
+    let input = $("#phone-input");
+    let errorMessage = $("#error-message");
+    if (input.val().length < 7) {
+      errorMessage.html("Please enter at least 7 digits");
+      return false;
+    } else {
+      let isValid = /^[\d]+$/.test(input.val()); // This checks if the input is valid by only containing numbers or "-"
+      if (!isValid) {
+        errorMessage.html("Please enter only numbers");
+        return false;
+      } else {
+        errorMessage.html("");
+        return true;
+      }
+    }
+  }
 
-}
+// #endregion
+// #region deliveryDriverisLate
+function deliveryDriverIsLate(driver){
+const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert" aria-live="assertive" aria-atomic="true" class="driver-late">
+    <div class="toast-header">
+      <strong class="me-auto text-danger">Delivery Driver Delay Alert!</strong>
+      <i class="bi bi-bell-fill"></i>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body driver-delay-body">
+        <span></span>
+        <br>
+        <span class="address"></span>
+        <br>
+        <span class="telephone"></span>
+        <br>
+        <br>
+        <strong class="text-mute"></strong>
+    </div>
+  </div>`);
+
+    toast.find(".driver-delay-body strong").text(`Estimated return time: ${driver.returnTime}`);
+    toast.find(".driver-delay-body span").first().text(`Name: ${driver.name} ${driver.surname} is delayed.`);
+    toast.find(".driver-delay-body .address").text(`Address: ${driver.address}`);
+    toast.find(".driver-delay-body .telephone").text(`Telephone: ${driver.telephone}`);
+    toast.appendTo('#toast-container');
+    toast.appendTo('#toast-container');
+    toast.toast('show');
+    setTimeout(()=>{
+        toast.remove();
+        },5000)
+};
 
 // #endregion
 // #region buttonAnimation
