@@ -6,10 +6,10 @@ function digitalClock() {  // Clock Functionality
         let minutes = currentDate.getMinutes();
         let seconds = currentDate.getSeconds();
         if(minutes<10){   // To add a 0 before the minutes/seconds
-            minutes = `0${minutes}`
+            minutes = `0${minutes}`;
         }
         if(seconds<10){
-            seconds = `0${seconds}`
+            seconds = `0${seconds}`;
         }
         let date = `${currentDate.getDate()} ${(monthNames[currentDate.getMonth()])} ${currentDate.getFullYear()}`;
         let time =  `${currentDate.getHours()}:${minutes}:${seconds}`;
@@ -74,7 +74,7 @@ class StaffMember extends Employee{
     constructor(data){
     super(data);
     this.picture = data.picture.thumbnail;
-    this.email = data.email
+    this.email = data.email;
     this.status = "In";
     this.outTime = "";
     this.duration = "";
@@ -83,10 +83,10 @@ class StaffMember extends Employee{
 class DeliveryDriver extends Employee{
     constructor(data){
     super(data);
-    this.vehicle = data.vehicle
-    this.telephone = data.telephone
-    this.address = data.address
-    this.returnTime = data.returnTime
+    this.vehicle = data.vehicle;
+    this.telephone = data.telephone;
+    this.address = data.address;
+    this.returnTime = data.returnTime;
 }};
 
 // #endregion
@@ -113,14 +113,14 @@ function staffUserGet(type,options) {
 // #region populateTable
 const staffEmployees = []
 function populateTable(value){
-    if(value>4){ // This fills the table to only 5 for now, changing this number adds more/less staff
+    if(value==5){ // This fills the table to only 5 for now, changing this number adds more/less staff
         return;
     }
     let staffMember = staffUserGet('Staff');
     staffEmployees.push(staffMember);
     $("#dashboardBoard tbody").append(`<tr><td><img src=${staffMember.picture} /></td><td>${staffMember.name}</td><td>${staffMember.surname}</td><td>${staffMember.email}</td><td>${staffMember.status}</td><td></td><td></td><td></td></tr>`);
     populateTable(value+1);
-}
+};
 // #endregion
 // #region updateTable
 function updateTable(value){
@@ -197,8 +197,8 @@ async function staffOut(){
 // #region staffIn
 function staffIn(){
     let board = $("#dashboardBoard tbody").children();  // Every table row of the body
-    let selectedName = []
-    let selectedSurnameName = []
+    let selectedName = [];
+    let selectedSurnameName = [];
     Array.prototype.forEach.call(board, child => {  // Finds every element that is selected on the table and adds the name value to an array
          if($(child).hasClass('selected')){
             selectedName.push(child.cells.item(1).innerText);
@@ -229,11 +229,11 @@ function returnTimer(totalMinutes,count) {
     let hours = Math.floor(totalMinutes / 60);
     if(hours>24){
         count++
-        return returnTimer(totalMinutes-1440,count)
+        return returnTimer(totalMinutes-1440,count);
     }
     let minutes = totalMinutes % 60;
     if(minutes<10){
-        minutes = `0${minutes}`
+        minutes = `0${minutes}`;
     }
     if(count>0){
         return `${hours}:${minutes}
@@ -246,7 +246,7 @@ function returnTimer(totalMinutes,count) {
 // #region staffMemberIsLate
 function staffMemberIsLate(staff) {
     const toast = $(`
-      <div class="toast position-fixed bottom-50 end-0 staff-late-toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast position-fixed bottom-50 end-0 staff-late-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
         <div class="toast-header">
           <strong class="me-auto text-danger">Staff Delay Alert!</strong>
           <i class="bi bi-bell-fill"></i>
@@ -269,11 +269,6 @@ function staffMemberIsLate(staff) {
     toast.appendTo('#toast-container');
     toast.appendTo('#toast-container');
     toast.toast('show');
-
-    setTimeout(()=>{
-      toast.remove();
-    },5000)
-
 };
 // #endregion
 // #region addDelivery
@@ -324,15 +319,15 @@ function clearDelivery(){
     $("#deliveryBoard .selected").fadeOut(500,'linear',function(){
         $("#deliveryBoard .selected").remove();
 
-    })
+    });
 };
 
 // #endregion
 // #region validateDelivery
 function validateDelivery(driver){
     const faultyInput = [];
-    Object.keys(driver).forEach(property=>{
-        if(driver[property] == ""){
+    Object.keys(driver).forEach(property => {
+        if(typeof driver[property] === "string" && (driver[property] == "" || driver[property].trim() === "")){
             const first = property.charAt(0); //Capitalize the fault
             const upper = first.toUpperCase();
             faultyInput.push(upper+property.substring(1));
@@ -342,7 +337,7 @@ function validateDelivery(driver){
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: `${faultyInput} field required!`,
+            text: `${faultyInput.join(' , ')} field required!`,
           })
         return false;
     };
@@ -351,8 +346,7 @@ function validateDelivery(driver){
             icon: 'error',
             title: `  Not a valid number!`,
             text: 'Telephone number must be at least 7 digits & only digits!',
-            footer: `Example 123456789.`
-
+            footer: `Example 123456789`
           })
         return false;
     };
@@ -380,7 +374,7 @@ function checkPhoneNumber() {
 // #endregion
 // #region deliveryDriverisLate
 function deliveryDriverIsLate(driver){
-const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert" aria-live="assertive" aria-atomic="true" class="driver-late">
+const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert" aria-live="assertive" aria-atomic="true" class="driver-late" data-bs-autohide="false">
     <div class="toast-header">
       <strong class="me-auto text-danger">Delivery Driver Delay Alert!</strong>
       <i class="bi bi-bell-fill"></i>
@@ -405,9 +399,6 @@ const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert
     toast.appendTo('#toast-container');
     toast.appendTo('#toast-container');
     toast.toast('show');
-    setTimeout(()=>{
-        toast.remove();
-        },5000)
 };
 
 // #endregion
@@ -425,3 +416,5 @@ $("button").hover(
   }
 );
 // #endregion
+
+
