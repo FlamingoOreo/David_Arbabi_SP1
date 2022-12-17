@@ -24,12 +24,12 @@ function digitalClock() {  // Clock Functionality
 $("#dashboardBoard tbody").on( "click", "tr", function(){ // Staff Selection
     if($(this).hasClass('selected')){
         if(window.event.ctrlKey){
-            if($(this).hasClass('selected')){
+            if($(this).hasClass('selected')){  // If the user selects an already selected row
                 $(this).removeClass('selected');
             }
         }
         else{
-            $(this).removeClass('selected');
+            $(this).removeClass('selected');     
             $(this).siblings().removeClass('selected');
         }
     }else{
@@ -37,7 +37,7 @@ $("#dashboardBoard tbody").on( "click", "tr", function(){ // Staff Selection
             $(this).addClass('selected');
         }
         else{
-            $(this).addClass('selected').siblings().removeClass('selected');
+            $(this).addClass('selected').siblings().removeClass('selected');  // The default way to select, removing other selected classes
         }
     }
 });
@@ -267,7 +267,6 @@ function staffMemberIsLate(staff) {
     toast.find('.toast-body span').text(`${staff.name} ${staff.surname} is delayed.`);
 
     toast.appendTo('#toast-container');
-    toast.appendTo('#toast-container');
     toast.toast('show');
 };
 // #endregion
@@ -397,7 +396,6 @@ const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert
     toast.find(".driver-delay-body .address").text(`Address: ${driver.address}`);
     toast.find(".driver-delay-body .telephone").text(`Telephone: ${driver.telephone}`);
     toast.appendTo('#toast-container');
-    toast.appendTo('#toast-container');
     toast.toast('show');
 };
 
@@ -406,7 +404,7 @@ const toast = $(`  <div class="toast position-fixed bottom-50 end-0" role="alert
 $("button").hover(
   function() {
     if($(this).is(":animated")) {
-        return;
+        return;      // If an animation is already ongoing then it stops the function
       }
     $(this).animate({ fontSize: "20px" }, 300);
   },
