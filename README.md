@@ -36,3 +36,8 @@ Swal.fire({
 The input field will allow the user to enter a text, we are asking for their name here. We can do more validations with the input if needed. 
 
 To conclude SweetAlert2 allows more flexibility in our alerts & prompts and further increases the user experience by having visually pleasing popups instead of the vanilla ones.
+
+
+To run the application we need to open the wdt_app.html inside the web_application folder. This is a HTML file where we can see the application and the functionalities. We are able to change the staff member's status from In to Out and vice versa by the use of the buttons, we can then choose a time in the form of minutes. We are able to display toasts on staff members that have not returned yet on the specified time.
+
+The delivery section allows us to add a delivery driver to the delivery board, we can schedule a Car or Motorcycle delivery and just like the staff members, we will be notified of any late deliveries with a toast notification. 
